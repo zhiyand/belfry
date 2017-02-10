@@ -33,7 +33,7 @@ export function timestamp2datetime (timestamp) {
  * @see https://alcor.concordia.ca/~gpkatch/gdate-method.html
  */
 export function date2index (year, month, day) {
-  year += month <= 12 ? 0 : divide(month - 1, 12) // Prevent month overflow
+  year += Math.floor((month - 1) / 12) // Prevent month overflow
   month = (month % 12 + 9) % 12 // Make March (3) the 0-th month
   year = year - divide(month, 10)
 
@@ -75,18 +75,20 @@ export function day (dayIndex) {
 }
 
 export function normalize ({year, month, date, hour, minute, second}) {
-  minute += divide(second, 60)
-  hour += divide(minute, 60)
-  date += divide(hour, 24)
+  let seconds = hour * 3600 + minute * 60 + second
+  let days = Math.floor(seconds / 86400)
 
-  second %= 60
-  minute %= 60
-  hour %= 24
+  date += days
 
-  if (second < 0) {
-    minute -= 1
-    second += 60
+  if (seconds < 0) {
+    seconds = -(days * 86400) + seconds
+  } else {
+    seconds -= days * 86400
   }
+
+  second = seconds % 60
+  minute = divide(seconds, 60) % 60
+  hour = divide(divide(seconds, 60), 60) % 24
 
   let dt = index2date(date2index(year, month, date))
 

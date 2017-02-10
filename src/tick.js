@@ -61,6 +61,8 @@ let units = {
   centry: 36500 * 86400
 }
 
+const durationRegExp = new RegExp('([+-]?\\d+)\\s(\\w+)s?$')
+
 export class Duration {
   constructor (seconds) {
     this.seconds = seconds
@@ -71,21 +73,23 @@ export class Duration {
   }
 }
 
-export default class DateTime {
+export default class Tick {
+  /**
+   * @public
+   */
   constructor (year, month, date, hour, minute, second, timezone, locale) {
-    if (year instanceof DateTime) {
-      this.createFromDateTime(year)
-    } else if (arguments.length === 1) {
+    if (year instanceof Tick) {
+      this.createFromTick (year)
+    } else if (typeof month === 'undefined') {
       this.createFromTimestamp(year)
     } else {
       this.initialize(year, month, date, hour, minute, second, timezone, locale)
     }
 
-    this.durationRegExp = new RegExp('([+-]?\\d)\\s(\\w+)s?$')
   }
 
   initialize (year, month, date, hour = 0, minute = 0, second = 0, timezone, locale) {
-    timezone = timezone || new Date().getTimezoneOffset() / -60
+    timezone = timezone || 0
 
     let dt = normalize({year, month, date, hour, minute, second})
 
@@ -109,7 +113,7 @@ export default class DateTime {
     }
   }
 
-  createFromDateTime (dt) {
+  createFromTick (dt) {
     this.initialize(dt.year, dt.month, dt.date, dt.hour, dt.minute, dt.second, dt.timezone, dt.locale)
   }
 
@@ -119,6 +123,9 @@ export default class DateTime {
     this.initialize(dt.year, dt.month, dt.date, dt.hour, dt.minute, dt.second, timezone, locale)
   }
 
+  /**
+   * @public
+   */
   diff (dt) {
     return new Duration(this.timestamp - dt.timestamp)
   }
@@ -131,7 +138,7 @@ export default class DateTime {
   add (duration) {
     let { amount, unit } = this.parseDuration(duration)
 
-    let dt = new DateTime(this)
+    let dt = new Tick(this)
     dt[unit] += amount
 
     return dt
@@ -141,7 +148,7 @@ export default class DateTime {
    * @private
    */
   parseDuration (duration) {
-    let [, amount, unit] = this.durationRegExp.exec(duration)
+    let [, amount, unit] = durationRegExp.exec(duration)
 
     amount = parseInt(amount)
     unit = unit.substr(-1, 1) === 's' ? unit.slice(0, unit.length - 1) : unit
@@ -156,7 +163,7 @@ export default class DateTime {
   sub (duration) {
     let { amount, unit } = this.parseDuration(duration)
 
-    let dt = new DateTime(this)
+    let dt = new Tick(this)
     dt[unit] += amount
 
     return dt
