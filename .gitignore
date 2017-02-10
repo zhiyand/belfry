@@ -38,3 +38,5 @@ build/Release
 
 # Final builds
 /lib/
+
+*.swp
