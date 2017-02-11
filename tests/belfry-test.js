@@ -1,4 +1,4 @@
-import Tick from '../src/tick'
+import Tick from '../src/belfry'
 import chai from 'chai'
 
 let expect = chai.expect

@@ -1,4 +1,7 @@
 {
+  "name": "belfry",
+  "version": "0.1.0",
+  "description": "A slim date time library",
   "main": "lib/index.js",
   "scripts": {
     "prepublish": "node_modules/babel-cli/bin/babel.js src --out-dir lib"
