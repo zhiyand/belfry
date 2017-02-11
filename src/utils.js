@@ -14,7 +14,7 @@ function days (year) {
 
 export function timestamp2datetime (timestamp) {
   let days = divide(timestamp, 86400)
-  days += 719468 // 1970-01-01's day index is 719460
+  days += 719468 // 1970-01-01's day index is 719468
 
   let dt = index2date(days)
   let seconds = timestamp % 86400
