@@ -1,5 +1,3 @@
-import Tick from './src/belfry'
+import Tick from './belfry'
 
-export default {
-  Tick
-}
+export default Tick
